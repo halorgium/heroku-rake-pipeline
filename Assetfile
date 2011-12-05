@@ -1,0 +1,23 @@
+require "coffee-script"
+
+class CoffeeScriptCompiler < Rake::Pipeline::Filter
+  def initialize(&block)
+    block ||= proc { |input| input.sub(/\.coffee$/, '.js') }
+    super(&block)
+  end
+
+  def generate_output(inputs, output)
+    inputs.each do |input|
+      output.write CoffeeScript.compile(input)
+    end
+  end
+end
+
+input "assets"
+output "public/assets"
+
+match "*.coffee" do
+  filter CoffeeScriptCompiler
+end
+
+# vim:ft=ruby
